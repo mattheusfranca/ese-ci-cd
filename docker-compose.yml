@@ -1,0 +1,9 @@
+# docker-compose.yml
+version: '3'
+services:
+  my-java-app:
+    build: .
+    image: my-java-app:latest
+    container_name: my_java_app_container
+    ports:
+      - "8080:8080"

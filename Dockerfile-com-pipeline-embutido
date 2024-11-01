@@ -1,0 +1,37 @@
+# Base image com Maven e JDK 11
+FROM maven:3.8.5-openjdk-11 AS build
+
+# Diretório de trabalho
+WORKDIR /app
+
+# Copia o arquivo de configuração do projeto
+COPY pom.xml .
+
+# Baixa as dependências para o cache
+RUN mvn dependency:go-offline
+
+# Copia o restante do código para o container
+COPY . .
+
+# Executa testes e faz o build da aplicação
+RUN mvn clean verify package
+
+# Executa o envio das métricas para o SonarCloud
+ARG SONAR_TOKEN
+ARG SONAR_PROJECT_KEY
+ARG SONAR_ORGANIZATION
+RUN mvn sonar:sonar \
+    -Dsonar.projectKey=$SONAR_PROJECT_KEY \
+    -Dsonar.organization=$SONAR_ORGANIZATION \
+    -Dsonar.host.url=https://sonarcloud.io \
+    -Dsonar.login=$SONAR_TOKEN
+
+# Imagem final para executar o .jar
+FROM openjdk:11-jre-slim
+WORKDIR /app
+
+# Copia o JAR gerado
+COPY --from=build /app/target/my-java-app.jar my-java-app.jar
+
+# Comando para rodar o aplicativo
+CMD ["java", "-jar", "my-java-app.jar"]
