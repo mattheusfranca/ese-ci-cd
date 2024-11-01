@@ -35,7 +35,10 @@ jobs:
         run: mvn test
 
       - name: Build application
-        run: mvn package -DskipTests
+        run: |
+          mvn jacoco:prepare-agent
+          mvn jacoco:report
+          mvn package -DskipTests
 
       - name: SonarCloud Scan
         env:
