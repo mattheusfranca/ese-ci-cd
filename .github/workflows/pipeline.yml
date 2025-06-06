@@ -7,7 +7,7 @@ on:
   pull_request:
     branches:
       - main
-  workflow_dispatch:  # ← permite execução manual pela interface do GitHub
+  workflow_dispatch:
 
 jobs:
   build:
@@ -24,9 +24,8 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-
       - name: Cache Maven packages
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
