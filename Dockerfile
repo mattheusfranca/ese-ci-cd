@@ -10,7 +10,7 @@ RUN mvn clean package
 RUN mvn test
 
 # Etapa final
-FROM openjdk:17-slim
+FROM eclipse-temurin:17-jdk-jammy
 WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
 CMD ["java", "-jar", "my-java-app.jar"]
